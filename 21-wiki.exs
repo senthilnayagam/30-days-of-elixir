@@ -111,7 +111,7 @@ defmodule Wiki do
   end
 
   def response(code, body, headers \\ []) do
-    headers = [code: code, content_length: Integer.to_char_list(IO.iodata_length(body))] ++ headers
+    headers = [code: code, content_length: Integer.to_charlist(IO.iodata_length(body))] ++ headers
     {:proceed, [response: {:response, headers, body}]}
   end
 end
