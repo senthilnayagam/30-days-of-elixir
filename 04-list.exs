@@ -62,7 +62,18 @@ defmodule ListTest do
 
   #pending refactor
   test "Enum.filter_map" do
-    some = Enum.filter_map sample(), &(String.first(&1) >= "M"), &(&1 <> " Morgan")
+    #some = Enum.filter_map sample(), &(String.first(&1) >= "M"), &(&1 <> " Morgan")
+
+#some = Enum.filter_map( 
+#  sample(), # enumerable
+#  &(String.first(&1) >= "M"), # filter
+#  &(&1 <> " Morgan") # mapper
+#  )
+
+some = sample()
+      |> Enum.filter(&(String.first(&1) >= "M"))   #filter
+      |> Enum.map(&(&1 <> " Morgan"))    #mapper
+
     assert some == ["Tim Morgan", "Mac Morgan"]
   end
 
