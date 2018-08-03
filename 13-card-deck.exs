@@ -17,7 +17,7 @@ defmodule Deck do
 
     If no deck is given, then create a new one and shuffle that.
   """
-  def shuffle(deck \\ new) do
+  def shuffle(deck \\ new()) do
     Enum.shuffle(deck)
   end
 
@@ -58,7 +58,9 @@ defmodule DeckTest do
   end
 
   test "shuffle" do
-    :random.seed(:erlang.now)
+    #Pending :erlang.now and :random.seed both are depricated
+    #:random.seed(:erlang.now)
+    :rand.seed(:exs1024s,:erlang.timestamp())
     deck = Deck.shuffle
     assert Deck.shuffle != deck
     assert length(Deck.shuffle) == 52
@@ -84,6 +86,7 @@ defmodule DeckTest do
     assert Enum.at(players, 2) == {"mac", [{"Hearts", 4}, {"Hearts", 8}, {"Hearts", "Q"}, {"Clubs",    3}, {"Clubs", 7}]}
     assert Enum.at(players, 3) == {"kai", [{"Hearts", 5}, {"Hearts", 9}, {"Hearts", "K"}, {"Clubs",    4}, {"Clubs", 8}]}
     [next | rest_of_deck] = deck
+    _ = rest_of_deck
     assert next == {"Clubs", 9}
   end
 end
