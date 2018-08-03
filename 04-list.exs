@@ -10,26 +10,26 @@ defmodule ListTest do
   end
 
   test "sigil" do
-    assert sample == ~w(Tim Jen Mac Kai)
+    assert sample() == ~w(Tim Jen Mac Kai)
   end
 
   test "head" do
-    [head | _] = sample
+    [head | _] = sample()
     assert head == "Tim"
   end
 
   test "tail" do
-    [_ | tail] = sample
+    [_ | tail] = sample()
     assert tail == ~w(Jen Mac Kai)
   end
 
   # warning, has to traverse the entire list!
   test "last item" do
-    assert List.last(sample) == "Kai"
+    assert List.last(sample()) == "Kai"
   end
 
   test "delete item" do
-    assert List.delete(sample, "Mac") == ~w(Tim Jen Kai)
+    assert List.delete(sample(), "Mac") == ~w(Tim Jen Kai)
     # only deletes the first occurrence
     assert List.delete([1, 2, 2, 3], 2) == [1, 2, 3]
   end
@@ -54,19 +54,20 @@ defmodule ListTest do
 
   # List.wrap is much like Ruby's Array() method
   test "wrap" do
-    assert List.wrap(sample) == sample
+    assert List.wrap(sample()) == sample()
     assert List.wrap(1) == [1]
     assert List.wrap([]) == []
     assert List.wrap(nil) == []
   end
 
+  #pending refactor
   test "Enum.filter_map" do
-    some = Enum.filter_map sample, &(String.first(&1) >= "M"), &(&1 <> " Morgan")
+    some = Enum.filter_map sample(), &(String.first(&1) >= "M"), &(&1 <> " Morgan")
     assert some == ["Tim Morgan", "Mac Morgan"]
   end
 
   test "list comprehension" do
-    some = for n <- sample, String.first(n) < "M", do: n <> " Morgan"
+    some = for n <- sample(), String.first(n) < "M", do: n <> " Morgan"
     assert some == ["Jen Morgan", "Kai Morgan"]
   end
 

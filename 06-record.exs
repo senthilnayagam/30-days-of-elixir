@@ -35,21 +35,21 @@ defmodule RecordTest do
   end
 
   test "defstruct" do
-    assert sample == %{__struct__: User, email: "kai@example.com", password: "trains"}
+    assert sample() == %{__struct__: User, email: "kai@example.com", password: "trains"}
   end
 
   test "property" do
-    assert sample.email == "kai@example.com"
+    assert sample().email == "kai@example.com"
   end
 
   test "update" do
-    u = sample
+    u = sample()
     u2 = %User{u | email: "tim@example.com"}
     assert u2 == %User{email: "tim@example.com", password: "trains"}
   end
 
   test "protocol" do
-    assert to_string(sample) == "kai@example.com"
+    assert to_string(sample()) == "kai@example.com"
   end
 end
 
