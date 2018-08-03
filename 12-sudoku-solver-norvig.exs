@@ -71,7 +71,7 @@ defmodule SudokuSolver do
   """
   def parse_grid(grid, board) do
     # To start, every square can be any digit; then assign values from the grid.
-    values = Enum.into((for s <- board.squares, do: {s, @cols}), HashDict.new)
+    values = Enum.into((for s <- board.squares, do: {s, @cols}), Map.new)
     do_parse_grid(values, Dict.to_list(grid_values(grid)), board)
   end
 
