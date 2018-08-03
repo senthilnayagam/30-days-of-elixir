@@ -1,3 +1,13 @@
+I am updating this project to follow current conventions and not have any warnings using latest erlang, elixir implementations
+
+sh run.sh
+first 16 tests can be run sequentially
+executes in around 15 seconds
+
+17, 20,21,22 are servers
+
+#~~~~~~~~~~~~~~~~~~~~~~~~
+
 # 30 Days of Elixir
 
 A walk through the [Elixir](http://elixir-lang.org/) language, one exercise per day for 30 days.
