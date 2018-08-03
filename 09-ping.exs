@@ -97,11 +97,15 @@ end
 case System.argv do
   [subnet] ->
     results = Subnet.ping(subnet)
-    Enum.filter_map(results, fn {_ip, exists} -> exists end, fn {ip, _} -> ip end)
+    results 
+      |> Enum.filter(fn {_ip, exists} -> exists end)
+      |> Enum.map(fn {ip, _} -> ip end)
       |> Enum.sort
       |> Enum.join("\n")
       |> IO.puts
   _ ->
+  
+
     ExUnit.start
 
     defmodule SubnetTest do
