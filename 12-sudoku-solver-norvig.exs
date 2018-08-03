@@ -58,11 +58,11 @@ defmodule SudokuSolver do
     squares = cross(@rows, @cols)
     u = units()
     list = for s <- squares do
-      all = u |> Dict.get(s) |> concat |> Enum.into(HashSet.new)
+      all = u |> Map.get(s) |> concat |> Enum.into(HashSet.new)
       me = [s] |> Enum.into(HashSet.new)
       {s, HashSet.difference(all, me)}
     end
-    Enum.into(list, HashDict.new)
+    Enum.into(list, Map.new)
   end
 
   @doc """
@@ -91,9 +91,10 @@ defmodule SudokuSolver do
   def grid_values(grid) do
     chars = for c <- grid, c in @cols or c in '0.', do: c
     unless count(chars) == 81, do: raise('error')
-    Enum.into(zip(squares(), chars), HashDict.new)
+    Enum.into(zip(squares(), chars), Map.new)
   end
 
+  # Pending changing to Dict to Map, runtime freezes or gives error
   @doc """
   Eliminate all the other values (except d) from values[s] and propagate.
   Return values, except return false if a contradiction is detected.
@@ -174,6 +175,7 @@ defmodule SudokuSolver do
       |> flatten(board)
   end
 
+  # Peding crashes when changing Dict to Map
   @doc """
   Flatten a values Dict back into a single char list.
   """
