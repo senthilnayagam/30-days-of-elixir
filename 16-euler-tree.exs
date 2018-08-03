@@ -22,7 +22,7 @@ defmodule Tree do
 
   def from_file(filename) do
     File.read!(filename)
-      |> String.strip
+      |> String.trim
       |> String.split("\n")
       |> Enum.reverse
       |> Enum.map(fn row ->
