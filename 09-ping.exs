@@ -46,13 +46,13 @@ defmodule Ping do
   end
 
   def ping_args(ip) do
-    wait_opt = if darwin?, do: '-W', else: '-w'
+    wait_opt = if darwin?(), do: '-W', else: '-w'
     ["-c", "1", wait_opt, "5", "-s", "1", ip]
   end
 
   def darwin? do
     {output, 0} = System.cmd("uname", [])
-    String.rstrip(output) == "Darwin"
+    String.trim_trailing(output) == "Darwin"
   end
 end
 
@@ -65,9 +65,9 @@ defmodule Subnet do
     Enum.each all, fn ip ->
       # Task.start gives better logging than spawn when things go awry.
       # http://elixir-lang.org/getting-started/processes.html#tasks
-      Task.start(Ping, :ping_async, [ip, self])
+      Task.start(Ping, :ping_async, [ip, self()])
     end
-    wait HashDict.new, Enum.count(all)
+    wait Map.new, Enum.count(all)
   end
 
   @doc """
@@ -75,14 +75,16 @@ defmodule Subnet do
   """
   def ips(subnet) do
     subnet = Regex.run(~r/^\d+\.\d+\.\d+\./, subnet) |> Enum.at(0)
-    Enum.to_list(1..254) |> Enum.map fn i -> "#{subnet}#{i}" end
+     
+     Enum.map(Enum.to_list(1..254), fn i -> "#{subnet}#{i}" end)
   end
 
   defp wait(dict, 0), do: dict
   defp wait(dict, remaining) do
     receive do
       {:ok, ip, pingable?} ->
-        dict = Dict.put(dict, ip, pingable?)
+        dict = Map.put(dict, ip, pingable?)
+        _ = dict # suppress warning
       {:error, ip, error} ->
         IO.puts "#{inspect error} for #{ip}"
     end
