@@ -29,7 +29,7 @@ defmodule SudokuSolver do
   def unit_list do
     (for c <- @cols, do: cross(@rows, [c])) ++
     (for r <- @rows, do: cross([r], @cols)) ++
-    (for rs <- chunk(@rows, 3), cs <- chunk(@cols, 3), do: cross(rs, cs))
+    (for rs <- chunk_every(@rows, 3), cs <- chunk_every(@cols, 3), do: cross(rs, cs))
   end
 
   @doc """
@@ -41,9 +41,9 @@ defmodule SudokuSolver do
       ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3']]
   """
   def units do
-    ul = unit_list
-    list = for s <- squares, do: {s, (for u <- ul, s in u, do: u)}
-    Enum.into(list, HashDict.new)
+    ul = unit_list()
+    list = for s <- squares(), do: {s, (for u <- ul, s in u, do: u)}
+    Enum.into(list, Map.new)
   end
 
   @doc """
@@ -56,7 +56,7 @@ defmodule SudokuSolver do
   """
   def peers do
     squares = cross(@rows, @cols)
-    u = units
+    u = units()
     list = for s <- squares do
       all = u |> Dict.get(s) |> concat |> Enum.into(HashSet.new)
       me = [s] |> Enum.into(HashSet.new)
