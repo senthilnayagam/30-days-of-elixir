@@ -34,14 +34,14 @@ defmodule Dealer do
     {"Q", 12},
     {"K", 13},
     {"A", 14}
-  ], HashDict.new)
+  ], Map.new)
 
   def start_game do
-    :global.register_name(:dealer, self)
+    :global.register_name(:dealer, self())
     IO.puts "waiting for players"
-    players = wait_for_players
+    players = wait_for_players()
     IO.puts "dealing cards"
-    deal(players, shuffle)
+    deal(players, shuffle())
     IO.puts "starting game"
     signal_start(players)
     IO.puts "waiting for plays"
@@ -63,7 +63,7 @@ defmodule Dealer do
   end
 
   defp shuffle do
-    :random.seed(:erlang.now)
+    :rand.seed(:exs1024s,:erlang.timestamp())
     deck = for suit <- ~w(Hearts Diamonds Clubs Spades),
               face <- [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"],
               do: {suit, face}
@@ -122,7 +122,7 @@ defmodule Dealer do
 
   defp sort_cards(cards) do
     Enum.sort cards, fn {_, {_, v1}}, {_, {_, v2}} ->
-      Dict.get(@card_vals, v1, v1) > Dict.get(@card_vals, v2, v2)
+      Map.get(@card_vals, v1, v1) > Map.get(@card_vals, v2, v2)
     end
   end
 
@@ -151,8 +151,8 @@ defmodule Player do
   """
   def start_game do
     dealer = spawn_link(Dealer, :start_game, [])
-    send dealer, {:join, self}
-    IO.puts "I am #{inspect self}"
+    send dealer, {:join, self()}
+    IO.puts "I am #{inspect self()}"
     wait_to_start(dealer)
   end
 
@@ -161,8 +161,8 @@ defmodule Player do
   """
   def join do
     dealer = :global.whereis_name(:dealer)
-    send dealer, {:join, self}
-    IO.puts "I am #{inspect self}"
+    send dealer, {:join, self()}
+    IO.puts "I am #{inspect self()}"
     wait_to_start(dealer)
   end
 
@@ -177,7 +177,7 @@ defmodule Player do
   end
 
   defp play(dealer, hand, card) do
-    send dealer, {:play, card, self}
+    send dealer, {:play, card, self()}
     List.delete hand, card
   end
 
@@ -205,6 +205,7 @@ defmodule Player do
   end
 
   defp select_and_play_card(dealer, hand) do
+    card = select_card(hand) #dummy
     show_hand(hand)
     if List.first(System.argv) == "--test" do # TODO how to set debug mode based on args?
       card = Enum.shuffle(hand) |> List.first
@@ -217,7 +218,7 @@ defmodule Player do
   defp select_card(hand) do
     try do
       number = IO.gets("Enter a card number to play: ")
-        |> String.strip
+        |> String.trim
         |> String.to_integer
       card = Enum.at(hand, number-1)
       unless card, do: raise ArgumentError
