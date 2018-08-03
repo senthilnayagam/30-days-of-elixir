@@ -91,7 +91,7 @@ defmodule SudokuSolver do
   def grid_values(grid) do
     chars = for c <- grid, c in @cols or c in '0.', do: c
     unless count(chars) == 81, do: raise('error')
-    Enum.into(zip(squares, chars), HashDict.new)
+    Enum.into(zip(squares(), chars), HashDict.new)
   end
 
   @doc """
@@ -167,7 +167,7 @@ defmodule SudokuSolver do
   Use display/1 to print the grid as a square.
   """
   def solve(grid) do
-    board = %Board{squares: squares, units: units, peers: peers}
+    board = %Board{squares: squares(), units: units(), peers: peers()}
     grid
       |> parse_grid(board)
       |> search(board)
@@ -206,8 +206,8 @@ defmodule SudokuSolver do
   Display these values as a 2-D grid.
   """
   def display(grid) do
-    chunk(grid, @size)
-      |> map(fn row -> chunk(row, 1) |> join(" ") end)
+    chunk_every(grid, @size)
+      |> map(fn row -> chunk_every(row, 1) |> join(" ") end)
       |> join("\n")
       |> IO.puts
   end
