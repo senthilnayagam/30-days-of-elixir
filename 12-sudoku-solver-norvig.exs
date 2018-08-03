@@ -58,9 +58,9 @@ defmodule SudokuSolver do
     squares = cross(@rows, @cols)
     u = units()
     list = for s <- squares do
-      all = u |> Map.get(s) |> concat |> Enum.into(HashSet.new)
-      me = [s] |> Enum.into(HashSet.new)
-      {s, HashSet.difference(all, me)}
+      all = u |> Map.get(s) |> concat |> Enum.into(MapSet.new)
+      me = [s] |> Enum.into(MapSet.new)
+      {s, MapSet.difference(all, me)}
     end
     Enum.into(list, Map.new)
   end
@@ -119,7 +119,7 @@ defmodule SudokuSolver do
   # (2) If a unit u is reduced to only one place for a value d, then put it there.
   defp eliminate_vals_from_square(values, square, vals_to_remove, board) do
     vals = Dict.get(values, square)
-    if Set.intersection(Enum.into(vals, HashSet.new), Enum.into(vals_to_remove, HashSet.new)) |> any? do
+    if MapSet.intersection(Enum.into(vals, MapSet.new), Enum.into(vals_to_remove, MapSet.new)) |> any? do
       vals = reduce vals_to_remove, vals, fn val, vals -> List.delete(vals, val) end
       if length(vals) == 0 do
         # contradiction, removed last value
