@@ -10,7 +10,13 @@ defmodule CowInterrogator do
   Gets name from standard IO
   """
   def get_name do
-    IO.gets("What is your name? ")
+    name = 
+    case IO.gets("What is your name? ") do
+      :eof      -> IO.puts("There was an error: eof")
+      {:error, reason} -> IO.puts("There was an error: #{reason}")
+      name -> name #IO.puts("data: #{name}")
+  end
+    name
     |> String.trim
   end
 
